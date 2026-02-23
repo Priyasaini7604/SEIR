@@ -6,13 +6,13 @@ import re
 # 64-bit polynomial rolling hash
 def word_hash(word):
     p = 53
-    m = 2**64
+    mod = 2**64
     h = 0
     power = 1
 
     for ch in word:
-        h = (h + ord(ch) * power) % m
-        power = (power * p) % m
+        h = (h + ord(ch) * power) % mod
+        power = (power * p) % mod
 
     return h
 
@@ -21,12 +21,12 @@ def word_hash(word):
 def get_word_freq(url):
     headers = {"User-Agent": "Mozilla/5.0"}
     response = requests.get(url, headers=headers)
-    soup = BeautifulSoup(response.text, "html.parser")
+    document = BeautifulSoup(response.text, "html.parser")
 
-    if not soup.body:
+    if not document.body:
         return {}
 
-    text = soup.body.get_text()
+    text = document.body.get_text()
     text = text.lower()
 
     words = re.findall(r"[a-z0-9]+", text)
@@ -70,10 +70,9 @@ def common_bits(h1, h2):
     return 64 - diff
 
 
-# ---------------- MAIN ----------------#
 
 if len(sys.argv) < 3:
-    print("Usage: python simhash_project.py <URL1> <URL2>")
+    print("Give two URLs in command line")
     sys.exit()
 
 url1 = sys.argv[1]
@@ -82,7 +81,7 @@ url2 = sys.argv[2]
 freq1 = get_word_freq(url1)
 freq2 = get_word_freq(url2)
 
-# 🔹 PRINT WORD FREQUENCY
+#  PRINT WORD FREQUENCY
 print("\nWord Frequency for URL 1:\n")
 for word, count in freq1.items():
     print(word, ":", count)
@@ -91,11 +90,12 @@ print("\nWord Frequency for URL 2:\n")
 for word, count in freq2.items():
     print(word, ":", count)
 
-# 🔹 Compute SimHash
+#  Compute SimHash
 simhash1 = compute_simhash(freq1)
 simhash2 = compute_simhash(freq2)
 
 print("\nSimHash 1:", simhash1)
 print("SimHash 2:", simhash2)
+
 
 print("\nCommon bits:", common_bits(simhash1, simhash2))
