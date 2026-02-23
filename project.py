@@ -19,26 +19,27 @@ headers = {
 response = requests.get(url, headers=headers)
 
 # Parse HTML
-soup = BeautifulSoup(response.text, "html.parser")
+document = BeautifulSoup(response.text, "html.parser")
 
 # 1. Print Page Title
-if soup.title:
-    print(soup.title.get_text(strip=True))
+if document.title:
+    print(document.title.get_text(strip=True))
 else:
     print("No Title Found")
 
 # 2. Print Page Body (only text)
-if soup.body:
-    body_text = soup.body.get_text(separator=" ", strip=True)
+if document.body:
+    body_text = document.body.get_text(separator=" ", strip=True)
     print(body_text)
 else:
     print("No Body Found")
 
 # 3. Print All Links
-for tag in soup.find_all("a"):
+for tag in document.find_all("a"):
     link = tag.get("href")
     if link:
         print(link)
+
 
 
 
